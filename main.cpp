@@ -4,6 +4,15 @@
 
 using namespace std;
 
+class GameData
+{
+public:
+	int x;
+	int y;
+	int xIndex;
+	int yIndex;
+};
+
 //맵 그리기
 char Map[10][10]{
 	{'0','0','0','0','0','0','0','0','0','0'},
@@ -24,13 +33,13 @@ char Map[10][10]{
 
 
 
-void SetLocation(int x, int y);
-void MovePlayer(int* PlayerX, int* PlayerY, int AddX, int AddY);
-void Draw(int* x, int* y, int MapLacationX, int MapLacationY);
+void SetLocation(int xPlayerLocation, int yPlayerLocation);
+void MovePlayer(GameData& PlayerLocation, int AddX, int AddY);
+void Draw(GameData& PlayerLocation, int MapLocationX, int MapLocationY);
 
 //플레이어가 위치한 배열 인덱스 저장 변수
-int xIndex;
-int yIndex;
+//int xIndex;
+//int yIndex;
 
 
 
@@ -40,9 +49,13 @@ int main()
 
 
 	bool bRunning = true;
-
+	GameData Player;
+	Player.x = 0;
+	Player.y = 0;
+	Player.xIndex = 0;
+	Player.yIndex = 0;
 	//플레이어 좌표 저장 변수
-	int x, y;
+	/*int x, y;*/
 
 
 	//맵 시작 위치 랜덤
@@ -55,10 +68,10 @@ int main()
 
 
 	//맵 출력 및 플레이어 주소값 넘김. 
-	Draw(&x, &y, MapLacationX, MapLacationY);
+	
+	Draw(Player, MapLacationX, MapLacationY);
 
-
-	SetLocation(x, y);
+	SetLocation(Player.x , Player.y);
 
 
 
@@ -76,22 +89,23 @@ int main()
 		{
 		case'w':
 		case'W':
-			MovePlayer(&x, &y, 0, -1);
+			MovePlayer(Player, 0, -1);
 			break;
 		case's':
 		case'S':
-			MovePlayer(&x, &y, 0, 1);
+			MovePlayer(Player, 0, 1);
 			break;
 		case'd':
 		case'D':
-			MovePlayer(&x, &y, 1, 0);
+			MovePlayer(Player, 1, 0);
 			break;
 		case'a':
 		case'A':
-			MovePlayer(&x, &y, -1, 0);
+			MovePlayer(Player, -1, 0);
 			break;
 		case 27:
 			bRunning = false;
+			system("cls");
 			break;
 
 		}
@@ -115,42 +129,42 @@ void CursorView()
 }
 
 //플레이어 위치(지정된 좌표값을 수정해줌)
-void SetLocation(int x, int y)
+void SetLocation(int xPlayerLocation, int yPlayerLocation)
 {
-	COORD pos = { x , y };
+	COORD pos = { xPlayerLocation ,yPlayerLocation };
 
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 
 }
 
-void MovePlayer(int* PlayerX, int* PlayerY, int AddX, int AddY)
+void MovePlayer(GameData& PlayerLocation, int AddX, int AddY)
 {
 
-	char TempMap = Map[yIndex + AddY][xIndex + AddX];
+	char TempMap = Map[PlayerLocation.yIndex + AddY][PlayerLocation.xIndex + AddX];
 	if (TempMap == '1')
 	{
 		//플레이어 현재 위치로 가서 공백출력(플레이어 지우기)
-		SetLocation(*PlayerX, *PlayerY);
+		SetLocation(PlayerLocation.x, PlayerLocation.y);
 		cout << ' ';
 
 		//이동한위치로 플레이어 출력
 
-		SetLocation(*PlayerX + AddX, *PlayerY + AddY);
+		SetLocation(PlayerLocation.x + AddX, PlayerLocation.y + AddY);
 		cout << 'P';
 
 
 		//이동한 위치 좌표값을 현재 위치로 적용
-		*PlayerX += AddX;
-		*PlayerY += AddY;
+		PlayerLocation.x += AddX;
+		PlayerLocation.y += AddY;
 
-		yIndex += AddY;
-		xIndex += AddX;
+		PlayerLocation.yIndex += AddY;
+		PlayerLocation.xIndex += AddX;
 
 	}
 
 }
 
-void Draw(int* x, int* y, int MapLacationX, int MapLacationY)
+void Draw(GameData &PlayerLocation, int MapLocationX, int MapLocationY)
 {
 
 
@@ -170,32 +184,32 @@ void Draw(int* x, int* y, int MapLacationX, int MapLacationY)
 
 			if (Temp == '0')
 			{
-				TempX = X + MapLacationX;
-				TempY = Y + MapLacationY;
+				TempX = X + MapLocationX;
+				TempY = Y + MapLocationY;
 				SetLocation(TempX, TempY);
 				cout << '#';
 			}
 			else if (Temp == '1')
 			{
-				TempX = X + MapLacationX;
-				TempY = Y + MapLacationY;
+				TempX = X + MapLocationX;
+				TempY = Y + MapLocationY;
 				SetLocation(TempX, TempY);
 				cout << ' ';
 			}
 			else if (Temp == '2')
 			{
-				TempX = X + MapLacationX;
-				TempY = Y + MapLacationY;
+				TempX = X + MapLocationX;
+				TempY = Y + MapLocationY;
 				SetLocation(TempX, TempY);
 
 				//인덱스 값 저장
-				xIndex = X;
-				yIndex = Y;
+				PlayerLocation.xIndex = X;
+				PlayerLocation.yIndex = Y;
 
 
 				//변경한 맵 위치만큼 플레이어 위치값 변경
-				*x = X + MapLacationX;
-				*y = Y + MapLacationY;
+				PlayerLocation.x = X + MapLocationX;
+				PlayerLocation.y = Y + MapLocationY;
 				
 
 
