@@ -31,8 +31,6 @@ char Map[10][10]{
 
 
 
-
-
 void SetLocation(int xPlayerLocation, int yPlayerLocation);
 void MovePlayer(GameData& PlayerLocation, int AddX, int AddY);
 void Draw(GameData& PlayerLocation, int MapLocationX, int MapLocationY);
